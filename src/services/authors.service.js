@@ -17,7 +17,25 @@ const getAuthorByIdService = async (id) => {
     return rows
 }
 
+
+
+// POST: create new Author
+const createNewAuthorService = async (name, email, bio) => {
+    return await pool.query('CALL sp_new_author($1, $2, $3)', [name, email, bio]);   
+}
+
+
+// POST: update Author
+const updateAuthorService = async (id, name, email, bio) => {
+    const { rows } = await pool.query('SELECT * FROM fn_update_author($1, $2, $3, $4)', [id, name, email, bio]);  
+    return rows;
+}
+
+
+
 module.exports = {
     getAuthorsService,
-    getAuthorByIdService
+    getAuthorByIdService,
+    createNewAuthorService,
+    updateAuthorService
 }

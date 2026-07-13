@@ -1,27 +1,39 @@
-
 const { Router } = require("express")
-const { getWelcomeController, getAuthorsController, getAuthorByIdController } = require("../controllers/authors.controller")
+const {  welcomeController, } = require("../controllers/welcome.controller")
+const { getAuthorsController, getAuthorByIdController, createNewAuthorController, updateAuthorController } = require("../controllers/authors.controller")
+const { getPostsController, getPostByIdController, createNewPostController } = require("../controllers/posts.controller")
 const router = Router()
 
-router.get("/", getWelcomeController)
+// GET welcome
+router.get("/", welcomeController);
+
 
 // GET /authors - list authors
 router.get("/authors", getAuthorsController);
-
 // GET /authors/:id - author details
 router.get("/authors/:id", getAuthorByIdController);
+// GET /posts - listar posts
+router.get("/posts", getPostsController);
+// GET /posts/:id - detalle post
+router.get("/posts/:id", getPostByIdController);
+// GET /posts/author/:authorId - posts con detalle de su author
 
-// •	POST /authors - crear usuario
-// •	PUT /authors/:id - actualizar usuario
-// •	DELETE /authors/:id - eliminar usuario
 
-// •	GET /posts - listar posts
 
-// •	GET /posts/:id - detalle post
-// •	GET /posts/author/:authorId - posts con detalle de su author
-// •	POST /posts - crear post
-// •	PUT /posts/:id - actualizar post
-// •	DELETE /posts/:id - eliminar post
+
+// POST /authors - crear usuario
+router.post("/authors", createNewAuthorController);
+//POST /posts - crear post
+router.post("/posts/:author_id", createNewPostController);
+
+
+// PUT /authors/:id - actualizar usuario
+router.put("/authors/:id", updateAuthorController);
+//PUT /posts/:id - actualizar post
+
+
+//DELETE /authors/:id - eliminar usuario
+//DELETE /posts/:id - eliminar post
 
 module.exports = {
   router
