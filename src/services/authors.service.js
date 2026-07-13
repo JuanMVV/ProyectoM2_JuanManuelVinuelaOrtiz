@@ -17,19 +17,39 @@ const getAuthorByIdService = async (id) => {
     return rows
 }
 
-
-
-// POST: create new Author
-const createNewAuthorService = async (name, email, bio) => {
-    return await pool.query('CALL sp_new_author($1, $2, $3)', [name, email, bio]);   
+// POST: New Author
+const createNewAuthorService = async (authorData) => {
+    const checkEmail = await pool.query('SELECT id FROM authors WHERE email = $1', [authorData.email]);
+    if (checkEmail.rows.length > 0) {
+        const error = new Error('This email is already registered.');
+        error.statusCode = 409;
+        throw error;
+    }       
+    return await pool.query('CALL sp_new_author($1, $2, $3)', [authorData.name, authorData.email, authorData.bio]);   
 }
 
-
-// POST: update Author
-const updateAuthorService = async (id, name, email, bio) => {
-    const { rows } = await pool.query('SELECT * FROM fn_update_author($1, $2, $3, $4)', [id, name, email, bio]);  
+// POST: Update Author
+const updateAuthorService = async (id, authorData = {}) => {
+    const authorId = Number(id ?? authorData?.id);
+    if (!Number.isInteger(authorId)) {
+        return null;
+    }  
+    const checkAuthorId = await pool.query('SELECT id FROM authors WHERE id = $1', [authorId]);
+    if (checkAuthorId.rows.length === 0) {
+        const error = new Error('Author not found.');
+        error.statusCode = 409;
+        throw error;
+    }  
+    const checkEmail = await pool.query('SELECT id FROM authors WHERE email = $1', [authorData.email]);
+    if (checkEmail.rows.length > 0) {
+        const error = new Error('This email is already registered.');
+        error.statusCode = 409;
+        throw error;
+    }   
+    const { rows } = await pool.query('SELECT * FROM fn_update_author($1, $2, $3, $4)', [id, authorData.name, authorData.email, authorData.bio]);  
     return rows;
 }
+
 
 
 

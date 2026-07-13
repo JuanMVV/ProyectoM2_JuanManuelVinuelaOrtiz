@@ -22,7 +22,7 @@ const requestLogger = (req, res, next) => {
 
 const errorHandler = (err, req, res, next) => {
     res.status(err.status || 500 ).json({
-      msg: 'error al procesar la solicitud',
+      message: 'error al procesar la solicitud',
       error: err.message || "Internal server error"
     })
 }

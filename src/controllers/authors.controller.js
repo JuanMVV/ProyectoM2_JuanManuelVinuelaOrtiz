@@ -19,7 +19,7 @@ const getAuthorByIdController = async (req, res, next) => {
       const { id } = req.params
       const author = await getAuthorByIdService(id)
       res.status(200).json({
-        msg: 'Author found',
+        message: 'Author found',
         data: author
       })
     } catch (error) {
@@ -29,11 +29,11 @@ const getAuthorByIdController = async (req, res, next) => {
 
 // POST /authors
 const createNewAuthorController = async (req, res, next) => {
-  try {
-    const { name, email, bio } = req.body;
-    await createNewAuthorService(name, email, bio)
+  try {   
+    const newAurhor = await createNewAuthorService(req.body)
     res.status(201).json({ 
-      msg: 'Author create sucessful'    
+      message: 'Author created successfully.',
+      status: 201          
     })
 
     } catch (error) {
@@ -42,21 +42,36 @@ const createNewAuthorController = async (req, res, next) => {
 }
 
 // POST(update) /authors/:id
+
+
+
 const updateAuthorController = async(req, res, next) => {
+  const authorId = Number(req.params.id ?? req.body?.id);
+    if (!Number.isInteger(authorId)) {
+        return res.status(400).json({
+          status: 400, 
+          message: 'Invalid author ID.'
+        });
+    }
+  
   try{
-    const { id } = req.params;
-    const { name, email, bio} = req.body;
-    const resp = await updateAuthorService(id, name, email, bio);
-    res.status(201).json({
-      msg: 'Author update sucessful',
-      data: resp
-    })
+    const updatedAuthor = await updateAuthorService(authorId, req.body);
+      if (updatedAuthor) {
+            res.status(200).json({ 
+              status: 200, 
+              message: 'The author was updated successfully.', 
+              data: updatedAuthor 
+            });
+        } else {
+            res.status(404).json({ 
+              status: 404, 
+              message: `Author with ID ${authorId} not found.` 
+            });
+        }
 
   } catch (error) {
       next(error)
     }
-
-
 }
 
 
