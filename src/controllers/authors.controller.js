@@ -1,4 +1,4 @@
-const { getAuthorsService, getAuthorByIdService, createNewAuthorService, updateAuthorService} = require("../services/authors.service")
+const { getAuthorsService, getAuthorByIdService, createNewAuthorService, updateAuthorService, deleteAuthorService} = require("../services/authors.service")
 
 
 const getAuthorsController = async (req, res, next)=> {
@@ -30,54 +30,67 @@ const getAuthorByIdController = async (req, res, next) => {
 // POST /authors
 const createNewAuthorController = async (req, res, next) => {
   try {   
-    const newAurhor = await createNewAuthorService(req.body)
+    await createNewAuthorService(req.body)
     res.status(201).json({ 
       message: 'Author created successfully.',
       status: 201          
     })
-
     } catch (error) {
       next(error)
     }
 }
 
-// POST(update) /authors/:id
-
-
-
-const updateAuthorController = async(req, res, next) => {
-  const authorId = Number(req.params.id ?? req.body?.id);
-    if (!Number.isInteger(authorId)) {
-        return res.status(400).json({
-          status: 400, 
-          message: 'Invalid author ID.'
-        });
-    }
-  
-  try{
+// PUT(update) /authors/:id
+const updateAuthorController = async (req, res, next) => {
+  try {
+    const authorId = Number(req.params.id ?? req.body?.id);
     const updatedAuthor = await updateAuthorService(authorId, req.body);
-      if (updatedAuthor) {
+    return res.status(200).json({
+      status: 200,
+      message: 'The author was updated successfully.',
+      data: updatedAuthor
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+// DELETE
+const deleteAuthorsController = async (req, res, next) => {
+  try {  
+      const authorId = Number(req.params.id);
+        if (!Number.isInteger(authorId)) {
+            return res.status(400).json({ 
+              status: 400, 
+              message: 'Invalid author ID.'
+            });
+        }    
+        const deletedAuthor = await deleteAuthorService(authorId);              
+        if (deletedAuthor) {
             res.status(200).json({ 
               status: 200, 
-              message: 'The author was updated successfully.', 
-              data: updatedAuthor 
+              message: 'Author deleted successfully.', 
+              data: null 
             });
-        } else {
+        } 
+        else {
             res.status(404).json({ 
               status: 404, 
-              message: `Author with ID ${authorId} not found.` 
+              error: `Author with ID = ${authorId} not found.`
             });
         }
-
-  } catch (error) {
-      next(error)
+    } catch (error) {
+        next(error)     
     }
-}
+};
+
 
 
 module.exports = {
   getAuthorsController,
   getAuthorByIdController,
   createNewAuthorController,
-  updateAuthorController
+  updateAuthorController,
+  deleteAuthorsController
 }
