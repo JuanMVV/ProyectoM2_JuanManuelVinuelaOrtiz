@@ -13,8 +13,8 @@ const getPostByIdService = async (id) => {
 }
 
 // POST: create new post
-const createNewPostService = async (id, postData = {}) => {
-    const checkAuthorId = await pool.query('SELECT id FROM authors WHERE id = $1', [id]);
+const createNewPostService = async (postData = {}) => {
+    const checkAuthorId = await pool.query('SELECT id FROM authors WHERE id = $1', [postData.author_id]);
     if (checkAuthorId.rows.length === 0) {
         const error = new Error('Author not found.');
         error.statusCode = 404;
@@ -22,14 +22,27 @@ const createNewPostService = async (id, postData = {}) => {
     }      
     const { rows } = await pool.query(
     'SELECT * FROM fn_create_post($1, $2, $3, $4)',
-    [id, postData.title, postData.content, postData.published]
+    [postData.author_id, postData.title, postData.content, postData.published]
   );
   return rows;
 }
 
 
+//PUT: update post
+const updatePostService = async (id, postData = {}) => {    
+    const checkPostId = await pool.query('SELECT id FROM posts WHERE id = $1', [id]);
+    if (checkPostId.rows.length === 0) {
+        const error = new Error('Post not found.');
+        error.statusCode = 404;
+        throw error;
+    }       
+    const { rows } = await pool.query('SELECT * FROM fn_update_post($1, $2, $3, $4)',[id, postData.title, postData.content, postData.published]);  
+    return rows;
+}
+
 module.exports = {
     getPostsService,
     getPostByIdService,
-    createNewPostService
+    createNewPostService,
+    updatePostService
 }

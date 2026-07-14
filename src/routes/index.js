@@ -1,8 +1,8 @@
 const { Router } = require("express")
 const { welcomeController } = require("../controllers/welcome.controller")
 const { getAuthorsController, getAuthorByIdController, createNewAuthorController, updateAuthorController, deleteAuthorsController } = require("../controllers/authors.controller")
-const { getPostsController, getPostByIdController, createNewPostController } = require("../controllers/posts.controller")
-const { validateAuthorBody } = require("../middleware/validatorBody")
+const { getPostsController, getPostByIdController, createNewPostController, updatePostController} = require("../controllers/posts.controller")
+const { validateAuthorBody, validatePostCreateBody, validatePostUpdateBody } = require("../middleware/validatorBody")
  
 const router = Router()
 
@@ -16,16 +16,14 @@ router.get("/posts/:id", getPostByIdController);
 
 // POSTs
 router.post("/authors", validateAuthorBody, createNewAuthorController);
-router.post("/posts", createNewPostController);
+router.post("/posts", validatePostCreateBody, createNewPostController);
 
 // PUTs
 router.put("/authors/:id", validateAuthorBody, updateAuthorController);
-//PUT /posts/:id - actualizar post
+router.put("/posts/:id", validatePostUpdateBody, updatePostController);
 
 //DELETEs
 router.delete("/authors/:id", deleteAuthorsController);
-
-
 //DELETE /posts/:id - eliminar post
 
 module.exports = {

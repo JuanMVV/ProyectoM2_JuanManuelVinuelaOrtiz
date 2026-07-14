@@ -1,12 +1,12 @@
-const { getPostsService, getPostByIdService, createNewPostService } = require("../services/posts.service")
+const { getPostsService, getPostByIdService, createNewPostService, updatePostService } = require("../services/posts.service")
 
 // GET all posts
 const getPostsController = async (req, res, next) => {
  try {
     const posts = await getPostsService()
-    res.status(200).json({
-      message: 'Posts found',
-      data: posts
+       res.status(200).json({
+       message: posts.length ? 'Posts retrieved successfully' : 'No Posts found',
+      data: posts   
     })
   } catch (error) {
       next(error)
@@ -17,10 +17,17 @@ const getPostsController = async (req, res, next) => {
 //GET post by Id
 const getPostByIdController = async (req, res, next) => {
   try {
-      const post = await getPostByIdService()
+      const { id } = req.params
+      const post = await getPostByIdService(id)
+        if (post.length === 0) {
+        return res.status(404).json({
+          message: `Post with id ${id} not found`,
+          data: []
+        })
+      }
       res.status(200).json({
-        message: 'Posts found',
-        data: post
+        message: 'Post retrieved successfully',
+        data: post[0]
       })
     } catch (error) {
         next(error)
@@ -31,14 +38,7 @@ const getPostByIdController = async (req, res, next) => {
 //POST create new post
 const createNewPostController = async (req, res, next) => {
  try {
-    const authorId = Number(req.body.authorId);
-    if (!Number.isInteger(authorId)) {
-      return res.status(400).json({
-        status: 400,
-        message: 'Invalid author ID.'
-      });
-    }
-    const newPost = await createNewPostService(authorId, req.body);
+    const newPost = await createNewPostService(req.body);
     return res.status(201).json({
       status: 201,
       message: 'Post created successfully.',
@@ -49,10 +49,36 @@ const createNewPostController = async (req, res, next) => {
   }
 };
 
+//PUT Update post
+const updatePostController = async (req, res, next) => {
+ try {
+    const id = Number(req.params.id ?? req.body?.id);
+    const updatedPost = await updatePostService(id, req.body);
+    return res.status(200).json({
+      status: 200,
+      message: 'The post was updated successfully.',
+      data: updatedPost
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 module.exports = {
  getPostsController,
  getPostByIdController,
- createNewPostController
+ createNewPostController,
+ updatePostController
 }

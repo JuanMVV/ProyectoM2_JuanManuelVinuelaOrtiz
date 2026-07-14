@@ -8,12 +8,7 @@ const getAuthorsService = async () => {
 
 // GET: author by Id
 const getAuthorByIdService = async (id) => {
-    const { rows } = await pool.query(`SELECT * FROM authors WHERE id = $1`, [id])
-    if(rows.length === 0){
-        const miError = new Error(`No author found with id ${id}`)
-        miError.status = 400
-        throw miError
-    }
+    const { rows } = await pool.query(`SELECT * FROM authors WHERE id = $1`, [id])    
     return rows
 }
 

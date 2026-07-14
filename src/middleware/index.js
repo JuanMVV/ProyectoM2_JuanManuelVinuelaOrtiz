@@ -19,18 +19,11 @@ const requestLogger = (req, res, next) => {
 
 }
 
-// const errorHandler = (err, req, res, next) => {
-//     res.status(err.status || 500).json({
-//       message: 'Error processing the request',
-//       error: err.message || 'Internal server error'       
-//     })
-// }
-
 const errorHandler = (err, req, res, next) => {
   return res.status(err.statusCode || 500).json({
-    status: err.statusCode || 500,
+    status: err.statusCode,
     message: 'Error processing the request',
-    error: err.message || 'Internal server error'
+    errorMsg: err.message || 'Internal server error'
   });
 };
 

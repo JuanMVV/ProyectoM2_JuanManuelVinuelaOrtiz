@@ -1,27 +1,37 @@
 const { getAuthorsService, getAuthorByIdService, createNewAuthorService, updateAuthorService, deleteAuthorService} = require("../services/authors.service")
 
 
-const getAuthorsController = async (req, res, next)=> {
- try {
+// GET all Authors
+const getAuthorsController = async (req, res, next) => {
+  try {
     const authors = await getAuthorsService()
     res.status(200).json({
-      message: 'Authors found',
+      message: authors.length ? 'Authors retrieved successfully' : 'No authors found',
       data: authors
-    })
-  } catch (error) {
-      next(error)
-  }
+  })
 
+  } catch (error) {
+    next(error)
+  }
 }
 
+// GET Author by Id
 const getAuthorByIdController = async (req, res, next) => {
   try {
       const { id } = req.params
       const author = await getAuthorByIdService(id)
-      res.status(200).json({
-        message: 'Author found',
-        data: author
+       if (author.length === 0) {
+      return res.status(404).json({
+        message: `Author with id ${id} not found`,
+        data: []
       })
+    }
+    return res.status(200).json({
+      message: 'Author retrieved successfully',
+      data: author[0]
+    })
+      
+      
     } catch (error) {
       next(error)
     }
@@ -32,15 +42,15 @@ const createNewAuthorController = async (req, res, next) => {
   try {   
     await createNewAuthorService(req.body)
     res.status(201).json({ 
-      message: 'Author created successfully.',
-      status: 201          
+      status: 201,
+      message: 'Author created successfully.'               
     })
     } catch (error) {
       next(error)
     }
 }
 
-// PUT(update) /authors/:id
+// PUT Update /authors/:id
 const updateAuthorController = async (req, res, next) => {
   try {
     const authorId = Number(req.params.id ?? req.body?.id);
