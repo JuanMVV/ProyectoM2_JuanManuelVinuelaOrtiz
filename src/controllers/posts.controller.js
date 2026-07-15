@@ -1,4 +1,4 @@
-const { getPostsService, getPostByIdService, createNewPostService, updatePostService } = require("../services/posts.service")
+const { getPostsService, getPostByIdService, createNewPostService, updatePostService, deletePostService, getPostsByAuthorIdService } = require("../services/posts.service")
 
 // GET all posts
 const getPostsController = async (req, res, next) => {
@@ -64,13 +64,47 @@ const updatePostController = async (req, res, next) => {
   }
 }
 
+// DELETE
+const deletePostsController = async (req, res, next) => {
+  try {  
+      const postId = Number(req.params.id);        
+        const deletedPost = await deletePostService(postId);              
+        if (deletedPost) {
+            res.status(200).json({ 
+              status: 200, 
+              message: 'Post deleted successfully.'
+            });
+        } 
+        else {
+            res.status(404).json({ 
+              status: 404, 
+              message: `Post not found.`
+            });
+        }
+    } catch (error) {
+        next(error)     
+    }
+};
 
-
-
-
-
-
-
+const getPostsByAuthorIdController = async (req, res, next) => {
+  try {
+    const authorId = Number(req.params.authorId);
+    const authorWithPosts = await getPostsByAuthorIdService(authorId);
+    if (!authorWithPosts) {
+      return res.status(404).json({ 
+        status: 404, 
+        message: 'No posts were found for this author.' 
+      });
+    }
+    return res.status(200).json({
+      status: 200,
+      message: 'Author posts retrieved successfully.',
+      data: authorWithPosts
+    });
+  } catch (error) {
+      next(error)
+  }
+};
 
 
 
@@ -80,5 +114,7 @@ module.exports = {
  getPostsController,
  getPostByIdController,
  createNewPostController,
- updatePostController
+ updatePostController,
+ deletePostsController,
+ getPostsByAuthorIdController
 }

@@ -65,7 +65,6 @@ const updateAuthorController = async (req, res, next) => {
   }
 };
 
-
 // DELETE
 const deleteAuthorsController = async (req, res, next) => {
   try {  
@@ -94,6 +93,8 @@ const deleteAuthorsController = async (req, res, next) => {
         next(error)     
     }
 };
+
+
 
 
 

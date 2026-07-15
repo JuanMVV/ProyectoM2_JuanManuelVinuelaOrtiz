@@ -1,7 +1,7 @@
 const { Router } = require("express")
 const { welcomeController } = require("../controllers/welcome.controller")
 const { getAuthorsController, getAuthorByIdController, createNewAuthorController, updateAuthorController, deleteAuthorsController } = require("../controllers/authors.controller")
-const { getPostsController, getPostByIdController, createNewPostController, updatePostController} = require("../controllers/posts.controller")
+const { getPostsController, getPostByIdController, createNewPostController, updatePostController, deletePostsController, getPostsByAuthorIdController} = require("../controllers/posts.controller")
 const { validateAuthorBody, validatePostCreateBody, validatePostUpdateBody } = require("../middleware/validatorBody")
  
 const router = Router()
@@ -12,7 +12,7 @@ router.get("/authors", getAuthorsController);
 router.get("/authors/:id", getAuthorByIdController);
 router.get("/posts", getPostsController);
 router.get("/posts/:id", getPostByIdController);
-// GET /posts/author/:authorId - posts con detalle de su author
+router.get("/posts/author/:authorId", getPostsByAuthorIdController);
 
 // POSTs
 router.post("/authors", validateAuthorBody, createNewAuthorController);
@@ -24,7 +24,7 @@ router.put("/posts/:id", validatePostUpdateBody, updatePostController);
 
 //DELETEs
 router.delete("/authors/:id", deleteAuthorsController);
-//DELETE /posts/:id - eliminar post
+router.delete("/posts/:id", deletePostsController)
 
 module.exports = {
   router

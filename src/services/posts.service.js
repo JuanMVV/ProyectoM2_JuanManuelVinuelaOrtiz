@@ -27,8 +27,7 @@ const createNewPostService = async (postData = {}) => {
   return rows;
 }
 
-
-//PUT: update post
+// PUT: update post
 const updatePostService = async (id, postData = {}) => {    
     const checkPostId = await pool.query('SELECT id FROM posts WHERE id = $1', [id]);
     if (checkPostId.rows.length === 0) {
@@ -40,9 +39,43 @@ const updatePostService = async (id, postData = {}) => {
     return rows;
 }
 
+// DELETE: Delete Post
+const deletePostService = async (id) => {    
+    const { rowCount } = await pool.query('DELETE FROM posts WHERE id = $1', [id]);
+    return rowCount > 0;  
+};
+
+const getPostsByAuthorIdService = async (authorId) => {
+    const { rows } = await pool.query(`SELECT * FROM fn_get_author_posts($1)`,[authorId]);
+    if (rows.length === 0) {
+        return null;
+    }
+    const [first] = rows;
+    const author = {
+        id: first.author_id,
+        name: first.author_name,
+        email: first.author_email,
+        bio: first.author_bio,
+        created_at: first.author_created_at,
+    };
+    const posts = rows.map(({ post_id, post_title, post_content, post_published, post_created_at }) => ({
+        id: post_id,
+        title: post_title,
+        content: post_content,
+        published: post_published,
+        created_at: post_created_at,
+    }));
+    return { author, posts };
+};
+
+
+
+
 module.exports = {
     getPostsService,
     getPostByIdService,
     createNewPostService,
-    updatePostService
+    updatePostService,
+    deletePostService,
+    getPostsByAuthorIdService
 }
