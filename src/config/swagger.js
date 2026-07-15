@@ -9,7 +9,7 @@ const swaggerSpec = {
   },
   servers: [
     {
-      url: process.env.NODE_ENV === 'production' ? 'https://proyectom2juanmanuelvinuelaortiz-production.up.railway.app/api-docs/' : 'http://localhost:3000',
+      url: process.env.NODE_ENV === 'production' ? 'https://proyectom2juanmanuelvinuelaortiz-production.up.railway.app' : 'http://localhost:3000',
     },
   ],
   tags: [

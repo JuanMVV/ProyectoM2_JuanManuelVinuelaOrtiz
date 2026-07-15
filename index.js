@@ -10,7 +10,7 @@ const startServer = async () => {
     console.log('DB connection successful')
 
     server.listen(PORT, () => {
-    console.log('server started and listening on port 3000 ' + PORT)
+    console.log('server started and listening on port ' + PORT)
     })
 
 }
