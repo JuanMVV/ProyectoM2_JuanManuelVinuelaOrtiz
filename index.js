@@ -11,7 +11,7 @@ const startServer = async () => {
 
     server.listen(PORT, () => {
     console.log('server started and listening on port 3000 ' + PORT)
-})
+    })
 
 }
 startServer()
