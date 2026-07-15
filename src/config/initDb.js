@@ -1,34 +1,15 @@
+const fs = require("node:fs");
+const path = require("node:path");
 const { pool } = require("./dbConnect");
 
-const initializateDatabase = async ( ) => {
+const initializeDatabase = async () => {
+    const seedPath = path.resolve(__dirname, "../../seed.sql");
+    const seedSql = fs.readFileSync(seedPath, "utf8");
 
-  await pool.query(`
-CREATE TABLE IF NOT EXISTS authors (
-id SERIAL PRIMARY KEY,
-name VARCHAR(200) NOT NULL,
-email VARCHAR(255) UNIQUE NOT NULL,
-bio TEXT,
-created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
-);
-CREATE TABLE IF NOT EXISTS posts (
-id SERIAL PRIMARY KEY,
-author_id INT NOT NULL REFERENCES authors(id) ON DELETE CASCADE ON UPDATE CASCADE,
-title VARCHAR(300) NOT NULL,
-content TEXT NOT NULL,
-published BOOLEAN DEFAULT FALSE NOT NULL,
-created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS comments (
-id SERIAL PRIMARY KEY,
-post_id INT NOT NULL REFERENCES posts(id) ON DELETE CASCADE ON UPDATE CASCADE,
-author_id INT NOT NULL REFERENCES authors(id) ON DELETE CASCADE ON UPDATE CASCADE,
-content TEXT NOT NULL,
-created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
-);
-`)
-}
+    await pool.query(seedSql);
+    console.log("Database initialized correctly from seed.sql");
+};
 
 module.exports = {
-  initializateDatabase
-}
+    initializeDatabase
+};

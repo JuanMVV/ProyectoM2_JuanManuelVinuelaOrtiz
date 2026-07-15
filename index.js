@@ -1,18 +1,19 @@
 const { pool } = require("./src/config/dbConnect")
-const { initializateDatabase } = require("./src/config/initDb")
+const { initializeDatabase } = require("./src/config/initDb")
+const { PORT } = require("./src/config/envs")
 const { server } = require("./src/server")
-const { loadEnvFile } = require("node:process")
-loadEnvFile('.env')
 
 const startServer = async () => {
-    await pool.query('SELECT 1')    
-    await initializateDatabase()
-    console.log("DB connection successful")
-    server.listen(process.env.PORT, function () {
-      console.log("server started and listening on port 3000")
-    })
-}
 
+    await pool.query('SELECT 1')
+    await initializeDatabase()
+    console.log('DB connection successful')
+
+    server.listen(PORT, () => {
+    console.log('server started and listening on port 3000 ' + PORT)
+})
+
+}
 startServer()
 
 process.on("SIGINT", async () => {
