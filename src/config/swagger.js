@@ -9,7 +9,10 @@ const swaggerSpec = {
   },
   servers: [
     {
-      url: process.env.NODE_ENV === 'production' ? 'https://proyectom2juanmanuelvinuelaortiz-production.up.railway.app' : 'http://localhost:3000',
+      url:
+        process.env.NODE_ENV === 'production'
+          ? 'https://proyectom2juanmanuelvinuelaortiz-production.up.railway.app'
+          : 'http://localhost:3000',
     },
   ],
   tags: [
@@ -196,6 +199,7 @@ const swaggerSpec = {
           required: true,
           content: {
             'application/json': {
+              // Crear post: requiere author_id, title, content
               schema: { $ref: '#/components/schemas/PostInput' },
             },
           },
@@ -245,7 +249,8 @@ const swaggerSpec = {
           required: true,
           content: {
             'application/json': {
-              schema: { $ref: '#/components/schemas/PostInput' },
+              // Actualizar post: sólo title, content, published
+              schema: { $ref: '#/components/schemas/PostUpdateInput' },
             },
           },
         },
@@ -357,11 +362,22 @@ const swaggerSpec = {
           published: { type: 'boolean' },
         },
       },
+      // Para CREAR un post
       PostInput: {
         type: 'object',
         required: ['author_id', 'title', 'content'],
         properties: {
           author_id: { type: 'integer' },
+          title: { type: 'string' },
+          content: { type: 'string' },
+          published: { type: 'boolean' },
+        },
+      },
+      // Para ACTUALIZAR un post
+      PostUpdateInput: {
+        type: 'object',
+        required: ['title', 'content'],
+        properties: {
           title: { type: 'string' },
           content: { type: 'string' },
           published: { type: 'boolean' },
@@ -400,6 +416,7 @@ const swaggerSpec = {
     },
   },
 }
+
 
 module.exports = {
   swaggerUi,
